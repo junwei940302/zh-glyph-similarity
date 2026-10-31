@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this table or code, please cite it as below."
+type: dataset
+title: "zh-glyph-similarity: A visual-similarity table for Chinese characters, Bopomofo, digits and Latin letters"
+abstract: >-
+  Pairwise visual similarity for 16,203 characters (Traditional and Simplified
+  Chinese, Bopomofo, Arabic digits and Latin letters), computed with one
+  stretch-tolerant chamfer metric on glyphs rendered with phone font stacks.
+authors:
+  - family-names: Huang
+    given-names: Jun-Wei
+version: 1.0.0
+date-released: 2026-11-01
+repository-code: "https://github.com/junwei940302/zh-glyph-similarity"
+url: "https://github.com/junwei940302/zh-glyph-similarity"
+license:
+  - MIT
+  - CC-BY-4.0
+keywords:
+  - Chinese characters
+  - Bopomofo
+  - glyph similarity
+  - visual confusables
+  - homoglyph
+  - scam SMS
+  - adversarial text

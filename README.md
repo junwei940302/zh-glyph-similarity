@@ -1,140 +1,299 @@
-# zh-glyph-similarity：繁中、簡中、注音、數字、英文的字形相似度總表
+<p align="center">
+  <img src="docs/assets/logo-256.png" width="128" alt="zh-glyph-similarity logo">
+</p>
 
-詐騙簡訊會用形似字、注音符號、數字冒充字母（Ca11、L1ne）來躲避關鍵字比對。這個專案把五類字元放進同一張方陣，用**同一套渲染流程與同一個公式**算出每一對字元「在手機上看起來有多像」，讓整張表的分數可以互相比較。
+<h1 align="center">zh-glyph-similarity</h1>
 
-目前只算**字形相似**。音似（同音、近音、注音拼寫）不在本表範圍。
+<p align="center">
+  <b>Which characters look alike on a phone?</b><br>
+  A visual-similarity table for 16,203 Traditional and Simplified Chinese characters, Bopomofo, digits and Latin letters.<br>
+  Every pair is scored with one formula, on glyphs rendered with real phone fonts.
+</p>
 
-## 範圍
+<p align="center">
+  <a href="https://github.com/junwei940302/zh-glyph-similarity/releases"><img src="https://img.shields.io/github/v/release/junwei940302/zh-glyph-similarity?label=release&color=2a78d6" alt="Latest release"></a>
+  <a href="#character-set"><img src="https://img.shields.io/badge/characters-16%2C203-2a78d6" alt="16,203 characters"></a>
+  <a href="#character-set"><img src="https://img.shields.io/badge/scripts-Hant%20%C2%B7%20Hans%20%C2%B7%20Bopomofo%20%C2%B7%200--9%20%C2%B7%20A--z-555" alt="Scripts"></a>
+  <a href="#fonts-and-platforms"><img src="https://img.shields.io/badge/fonts-Android%20%C2%B7%20iOS%20(build%20locally)-555" alt="Fonts"></a>
+  <br>
+  <a href="#quick-start"><img src="https://img.shields.io/badge/python-3.9%2B-3776AB?logo=python&logoColor=white" alt="Python 3.9+"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/code-MIT-yellow" alt="Code: MIT"></a>
+  <a href="LICENSE-DATA"><img src="https://img.shields.io/badge/data-CC%20BY%204.0-lightgrey" alt="Data: CC BY 4.0"></a>
+  <a href="https://github.com/junwei940302/zh-glyph-similarity/releases"><img src="https://img.shields.io/github/downloads/junwei940302/zh-glyph-similarity/total?color=2a78d6" alt="Downloads"></a>
+</p>
 
-字元索引共 16,203 字，順序固定（`data/charset.tsv` 的列號就是矩陣的列與欄），是下列字集的聯集：
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#results">Results</a> ·
+  <a href="#data-files">Data files</a> ·
+  <a href="https://github.com/junwei940302/zh-glyph-similarity/releases">Download</a> ·
+  <a href="README.zh-TW.md">繁體中文</a>
+</p>
 
-| 類別 | 來源 | 字數 |
-|---|---|---|
-| 注音符號 | U+3105–U+3129 的 37 個符號＋5 個聲調符號 | 42 |
-| 阿拉伯數字、英文字母 | ASCII 0–9、A–Z、a–z | 62 |
-| 繁體中文編碼 | Big5 第一字面（常用）＋第二字面（次常用） | 5,401 ＋ 7,652 |
-| 簡體中文編碼 | GB2312 一級＋二級 | 3,755 ＋ 3,008 |
-| 臺灣官方字表 | 教育部《常用國字標準字體表》＋《次常用國字標準字體表》 | 4,808 ＋ 6,343 |
-| 中國官方字表 | 《通用规范汉字表》一、二、三級 | 3,500 ＋ 3,000 ＋ 1,605 |
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/hero-light.png">
+    <img alt="Characters and their look-alikes with similarity scores: 0 and O 0.93, l and I 0.95, ㄚ and 丫 0.83, 未 and 末 0.94, 撤 and 徹 0.95, 賴 and 頛 0.88" src="docs/assets/hero-light.png" width="100%">
+  </picture>
+</p>
 
-重疊的字只算一次。為什麼取聯集：
-- 兩套編碼與兩份官方字表各有對方沒有的字。例如 GB2312 的部首部件（冂、匚、勹、卩、厶、凵、攵）正是注音 ㄇ、ㄈ、ㄅ、ㄗ、ㄙ、ㄩ、ㄆ 的字源，《通用规范汉字表》卻沒有收；《通用规范汉字表》三級的人名、地名用字則多半不在 GB2312。
-- 罕用字留在表裡反而有用：詐騙也可能挑罕用的形似字。
+Scam messages dodge keyword filters by swapping characters that look the same: `L1NE` for `LINE`, Bopomofo `ㄚ` for `丫`, a rare `頛` for `賴`. This project measures how alike any two of 16,203 characters look when a phone draws them, so filters, normalisers and test sets can account for those swaps.
 
-`charset.tsv` 的 `sets` 欄記錄每個字屬於哪些字集（`big5_1`、`moe_1`、`tgh_3` 等）。只需要部分字集時，直接取矩陣的子集即可，不用重算。字集的前 15,537 字（Big5 ∪ GB2312）與第一版相同、位置不變，`python3 -m glyphsim.charset --no-lists` 可重建第一版字集。
+## Highlights
 
-## 方法
+- **Every pair, one formula.** 16,203 × 16,203 ≈ 262 million scores, all computed the same way, so a 0.90 means the same thing anywhere in the table.
+- **Rendered the way phones render.** Per-character font fallback, one canvas, one font size, one baseline. The Android table is published; the iOS table builds on your own Mac.
+- **Tolerates width, not shape.** A stroke-distance metric that lets glyphs stretch a little, so `0` and `O` come out as near-identical (0.93) while `0` and `8` do not top the list.
+- **Checked against known look-alikes.** Unicode confusables, a curated list of look-alike pairs, a second font, and Android vs iOS.
+- **Easy to use.** `pip install`, three lines of Python, a command-line tool, or a plain TSV.
+- **Open and reproducible.** Open fonts, pinned character lists, SHA-256 manifests. Code under MIT, data under CC BY 4.0.
 
-1. **依平台的字型堆疊渲染**（`stacks.json`）：每個字使用堆疊中第一個收錄它的字型，模擬手機的字型備援。所有字用同一個畫布（64×64）、同一個字級（56 px）、同一條基線，所以窄的「l」與全形的「一」保留真實的相對大小與位置。
-2. **計算相似度（`chamfer_st`）**：
-   - 基礎是對稱 chamfer 距離：把筆畫（墨色 ≥50%）視為點集，計算 A 的筆畫到 B 最近筆畫的平均距離，再與反方向平均。
-   - 加上寬度容許：任一字可左右拉伸 0.8、0.89、1.0、1.12、1.25 倍，取最像的結果，每拉伸 |ln s| 加 0.5 px 的距離作為代價。
-   - 相似度 = `exp(-距離 / 3 px)`。全部格子都用這同一個公式。
-3. **評估**：用已知的形似字對檢查排名（Recall@k、MRR、對隨機字對的 AUC）。
-
-### 為什麼要容許寬度差異
-
-最初版本只用 chamfer 距離，結果「0」最像的字依序是 D、B、8，O 只排第 4。原因是 Roboto 的 0 寬 25 px、O 寬 32 px，整圈外框都偏移了；8 和 0 一樣寬，外框幾乎重疊，只多了中間一筆，所以 chamfer 反而判 8 比較像。這和人眼的判斷相反：人看字形會容忍寬窄差異。加入寬度容許後，0 和 O 互為第一名（0.93），8 退到第 7。
-
-我們也試過「洞數不同就扣分」（0 有 1 個封閉區域、8 有 2 個），但在 64 px 下，複雜漢字的封閉區域數不穩定，漢字形近字的前 10 名命中率從 98% 掉到 88%，所以沒有採用。完整的參數比較在 `experiments/`。
-
-### 平台字型
-
-| 堆疊 | 拉丁字母、數字 | 漢字、注音 | 發布方式 |
-|---|---|---|---|
-| `android_aosp_zh_tw` | Roboto | Noto Sans CJK TC（缺字用 SC） | 字型為 SIL OFL 1.1，直接發布計算結果 |
-| `ios_zh_tw` | SF Pro（SFNS，opsz 17） | 蘋方 TC（缺字用 SC） | **只提供程式**，請在自己的 Mac 上產生，原因見 `NOTICE.md` |
-
-Android 品牌眾多（Samsung、小米、OPPO、vivo 各有自家字型），目前以 AOSP 預設的 Noto Sans CJK＋Roboto 作為 Android 基準。字型對結果的影響見下方「字型敏感度」。
-
-## 結果（Android 基準，`chamfer_st`）
-
-| 驗證集 | 字對數 | R@1 | R@5 | R@10 | MRR | AUC |
-|---|---|---|---|---|---|---|
-| Unicode confusables（UTS #39 v18，同 skeleton） | 92 | 0.511 | 0.804 | 0.891 | 0.644 | 0.941 |
-| 自建字對（`groundtruth/curated_pairs.tsv`） | 140 | 0.507 | 0.871 | 0.929 | 0.665 | 0.875 |
-| pycorrector same_stroke（簡中，共用部件） | 2,818 | 0.033 | 0.093 | 0.136 | 0.067 | 0.622 |
-
-自建字對依類型的 R@10：漢字形近字 0.975、數字與字母 1.000、注音與其字源漢字 0.825、英文與漢字 0.833。
-
-與最初版本（純 chamfer，15,537 字）相比：自建字對 R@5 從 0.850 升到 0.871，數字與字母的 R@1 從 0.357 升到 0.500，Unicode 字對的 AUC 從 0.908 升到 0.938。
-
-說明：
-- 模糊後的影像餘弦相似度（`blurcos`）也試過，整體不如 chamfer 系列。
-- pycorrector 的 same_stroke 是拼字檢查用的混淆集，收的是「共用部件」的字（例如 丁／盯、王／琴），整體字形並不像。本表衡量的是整個字看起來像不像，所以這組分數低是預期中的，只列出供參考。
-- 自建字對中「注音與其字源漢字」（例如 ㄉ／刀）有些在字型設計上已經差很多，相似度低反映的是實際字形。
-- 自建字對由本專案整理，不是外部標註。最可靠的驗證方式是請多人對字對評分，這是後續工作。
-
-![Android 預覽](data/preview_android_aosp_zh_tw.png)
-
-### iOS（在 Mac 上產生，表本身不公開）
-
-| 驗證集 | 字對數 | R@1 | R@5 | R@10 | MRR | AUC |
-|---|---|---|---|---|---|---|
-| Unicode confusables | 92 | 0.761 | 0.935 | 0.957 | 0.849 | 0.959 |
-| 自建字對 | 140 | 0.500 | 0.871 | 0.907 | 0.654 | 0.848 |
-| pycorrector same_stroke | 2,818 | 0.031 | 0.087 | 0.127 | 0.064 | 0.607 |
-
-蘋方 TC 缺的 238 字（多為《通用规范汉字表》新增字）由蘋方 SC 畫出。
-
-### 可重現性
-
-同一套程式在雲端（Linux，OpenBLAS）與 MacBook Air M2（Accelerate）上算出的 Android 表，三組驗證分數完全相同。發布檔的位元組不完全相同，推測是兩邊矩陣運算的浮點加總順序不同，使少數格子在換算成 0～255 時相差 1。Releases 中的檔案以 `manifest_*.json` 記錄的 SHA-256 為準。
-
-
-## 字型敏感度與跨平台差異
-
-用兩組比較檢查字型的影響：
-
-| 比較 | 字集 | 漢字數 | 隨機字對 Spearman | Pearson | A 判為很像（≥0.85）的字對，B 仍 ≥0.80 | 這些字對在 B 的前 50 名 | 前 10 名重疊度（Jaccard） |
-|---|---|---|---|---|---|---|---|
-| Android（Noto）對圓體 jf open 粉圓 2.1 | 15,537 字版本 | 8,564 | 0.926 | 0.951 | 98.0% | 94.2% | 0.34 |
-| Android（Noto＋Roboto）對 iOS（蘋方＋SF Pro） | 16,203 字 | 16,099 | 0.931 | 0.952 | 97.7% | 93.0% | 0.38 |
-
-- 粉圓只收錄約 8,600 字，所以第一組只比較兩種字型都畫得出的漢字。
-- 第二組的「很像的字對」取自隨機 4,000 個漢字各自的前 10 名（`glyphsim.compare --sim-a --sim-b`，共 18,338 對）。這些字對在 iOS 的排名中位數為 6，66% 仍在前 10 名。
-- 第 1 名相同的比例（Android 對 iOS）：漢字 45%、注音 52%、數字與英文 74%。
-- 差異多半來自字型設計。例如 Noto 把「刂」畫在字框右半邊（和它在「到」「別」中的位置相同），所以 Android 表中它的鄰近字是右側有直筆的字（习、书、泪）；在 iOS 表中則是同樣細長的丬、阝、卩。
-
-結論：**「哪些字很像」受字型影響小，「確切排名」受字型影響大**。使用本表時建議依分數門檻取候選字，不要依賴第幾名；若要同時涵蓋多個平台，可對各平台的表取最大值。
-
-## 總表在哪裡、有多大
-
-「總表」是 16,203 × 16,203 的完整方陣，共 2 億 6,254 萬格，每格 1 byte（分數 × 255 取整數）：
-
-| 檔案 | 大小 | 內容 |
-|---|---|---|
-| `sim_<表名>.npy`（計算時產生） | 263 MB | 完整方陣，NumPy 格式，可直接 `np.load(..., mmap_mode="r")` |
-| `matrix_<表名>.triu.u8.xz`（Releases） | 90 MB | 方陣對稱，只存上三角再以 xz 壓縮；用 `glyphsim.load.load_matrix()` 還原，與 `.npy` 逐格相同 |
-| `neighbors_<表名>.tsv`（Releases） | 26 MB | 每個字最像的前 50 字，方便直接閱讀，不是完整方陣 |
-| `manifest_<表名>.json`（Releases） | 2 KB | 參數、渲染設定、檔案 SHA-256 |
-
-完整方陣與鄰近字表放在本 repo 的 **Releases**，不放在 git 歷史裡。若每格改存 32 位元浮點數，完整方陣會是 1 GB；0～255 的精度（約 0.004）已足夠排序與設門檻。
-
-## 使用方式
+## Quick start
 
 ```bash
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-OUT=/外接硬碟/路徑 PYTHON=.venv/bin/python scripts/run_stack.sh android_aosp_zh_tw   # 任何系統，自動下載字型
-OUT=/外接硬碟/路徑 PYTHON=.venv/bin/python scripts/run_stack.sh ios_zh_tw            # 只能在 macOS 上執行
-.venv/bin/python -m glyphsim.compare /外接硬碟/路徑/topk_android_aosp_zh_tw_chamfer_st.npz /外接硬碟/路徑/topk_ios_zh_tw_chamfer_st.npz \
-  --sim-a /外接硬碟/路徑/sim_android_aosp_zh_tw_chamfer_st.npy --sim-b /外接硬碟/路徑/sim_ios_zh_tw_chamfer_st.npy
-.venv/bin/python -m glyphsim.export android_aosp_zh_tw_chamfer_st --data /外接硬碟/路徑 --outdir /外接硬碟/路徑/release
+pip install "git+https://github.com/junwei940302/zh-glyph-similarity"
 ```
-
-- `data/charset.tsv` 已隨 repo 提供；若刪除它，`run_stack.sh` 會先下載官方字表再重建。
-- 在 MacBook Air M2 上，一張表約 1 分鐘，匯出約 2 分鐘；計算時需要約 2.5 GB 記憶體。
-- 只要用表、不想自己算：到 Releases 下載 `charset.tsv` 與 `matrix_*.triu.u8.xz` 或 `neighbors_*.tsv`。
 
 ```python
-from glyphsim.load import load_charset, load_matrix
-chars = load_charset("charset.tsv")
-sim = load_matrix("matrix_android_aosp_zh_tw_chamfer_st.triu.u8.xz", len(chars))   # 16203 x 16203
-sim[chars.index("0"), chars.index("O")] / 255   # 0.93
+from glyphsim import GlyphSim
+
+gs = GlyphSim.from_release()      # downloads the table once (~90 MB), then loads from cache
+
+gs.similarity("0", "O")           # 0.933
+gs.similarity("ㄚ", "丫")          # 0.831
+gs.neighbors("賴", k=3)            # [('頛', 0.878), ('赖', 0.867), ('轒', 0.847)]
+gs.lookalikes("l")                # ['i', 'I', '丨']   (score >= 0.85)
 ```
 
-## 授權
+From the command line:
 
-- 程式碼（`glyphsim/`、`scripts/`、`experiments/*.py`）：MIT，見 `LICENSE`。
-- 資料（`data/charset.tsv`、Releases 中的相似度表、`groundtruth/curated_pairs.tsv`、評估結果）：CC BY 4.0，見 `LICENSE-DATA`。使用時請註明出處。
-- 不隨專案散布的第三方資料與字型（Unicode confusables、pycorrector、官方字表、Noto、Roboto、Apple 字型），以及不提供 iOS 表的原因，見 `NOTICE.md`。
+```console
+$ glyphsim neighbors ㄚ -k 3
+  1  丫  U+4E2B  0.831
+  2  Y  U+0059  0.800
+  3  T  U+0054  0.627
+
+$ glyphsim sim 未 末
+0.941
+```
+
+The first call caches the table in `~/.cache/zh-glyph-similarity` (set `GLYPHSIM_CACHE` to change it). Later calls take about 0.2 s.
+
+<details>
+<summary><b>Without installing anything</b></summary>
+
+Download `charset.tsv` and `neighbors_android_aosp_zh_tw_chamfer_st.tsv` from [Releases](https://github.com/junwei940302/zh-glyph-similarity/releases) and read them with any tool:
+
+```python
+import pandas as pd
+
+nb = pd.read_csv("neighbors_android_aosp_zh_tw_chamfer_st.tsv", sep="\t")
+nb[nb.char == "賴"].head(3)
+#  char codepoint  rank neighbor neighbor_codepoint   score
+#     賴    U+8CF4     1        頛             U+981B  0.8793
+#     賴    U+8CF4     2        赖             U+8D56  0.8683
+#     賴    U+8CF4     3        轒             U+8F52  0.8466
+```
+
+</details>
+
+## Use cases
+
+**Harden keyword filters.** `pattern()` turns a keyword into a regular expression that also matches look-alike spellings:
+
+```python
+import re
+
+rx = re.compile(gs.pattern("LINE", min_score=0.8))   # 'L[Ili丨1ft][NH]E'
+bool(rx.search("加L1NE領飆股"))                       # True
+bool(rx.search("加LlNE好友"))                         # True
+```
+
+Other uses:
+- **Normalise text** before classification by mapping rare look-alikes to the common character they imitate.
+- **Build adversarial test sets** by swapping characters for high-scoring look-alikes and checking how much a model degrades.
+- **Rank OCR or spelling-correction candidates** by visual closeness.
+
+## Gallery
+
+The most similar characters for a few queries, from the Android table:
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/gallery-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/gallery-light.png">
+    <img alt="Grid of query characters with their eight most similar characters and scores" src="docs/assets/gallery-light.png" width="90%">
+  </picture>
+</p>
+
+## How it works
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/how-it-works-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/how-it-works-light.png">
+    <img alt="Four steps: render 0 and O, measure stroke gaps (0.81), allow width changes (0.93), score every pair" src="docs/assets/how-it-works-light.png" width="100%">
+  </picture>
+</p>
+
+1. **Render like a phone.** Each character is drawn with the first font in the platform's fallback list that contains it, on a 64 × 64 canvas at 56 px, all on the same baseline. A narrow `l` and a full-width `一` keep their real size and position.
+2. **Measure stroke gaps.** Strokes become point sets; the symmetric chamfer distance averages how far each stroke pixel of one glyph is from the nearest stroke of the other.
+3. **Allow width changes.** Either glyph may be stretched horizontally by 0.8–1.25×; the best fit is kept, plus a penalty of 0.5 px × |ln s|. Without this step, `O` ranks fourth for `0`, behind `D`, `B` and `8`: plain chamfer penalises the 7 px width difference along the whole outline.
+4. **Score every pair.** similarity = exp(−distance / 3 px), stored as `round(similarity × 255)`.
+
+A penalty for a different number of enclosed holes (0 vs 8) was also tried; hole counts are unstable for complex characters at 64 px and it hurt Chinese results, so it is not used. The parameter grid is in [`experiments/`](experiments/).
+
+## Results
+
+Each known look-alike pair counts as found if the partner appears among the top *k* neighbours. Android table, same 15,537-character set for all three metrics:
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/benchmark-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/benchmark-light.png">
+    <img alt="Bar charts: share of known look-alikes found in the top 1, 5 and 10 neighbours for three metrics" src="docs/assets/benchmark-light.png" width="100%">
+  </picture>
+</p>
+
+Final tables (16,203 characters):
+
+| Ground truth | Pairs | Android top 1 | Android top 5 | Android top 10 | iOS top 1 | iOS top 5 | iOS top 10 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Unicode confusables (UTS #39 v18, same skeleton) | 92 | 51% | 80% | 89% | 76% | 93% | 96% |
+| Curated look-alike pairs ([`groundtruth/`](groundtruth/curated_pairs.tsv)) | 140 | 51% | 87% | 93% | 50% | 87% | 91% |
+| — of which Chinese–Chinese (未/末, 戊/戌, …) | 80 | 56% | 94% | 98% | | | |
+| — of which digit–letter (0/O, 1/l, 5/S, …) | 14 | 50% | 93% | 100% | | | |
+
+The pycorrector `same_stroke` list (2,818 pairs) scores low (top 10: 14%) by design: it lists characters that *share a component* (丁/盯, 王/琴), which does not make the whole glyphs look alike.
+
+### Fonts and platforms
+
+Do the results depend on the font? Ranks do; look-alikes mostly do not.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/fonts-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/fonts-light.png">
+    <img alt="Look-alike pairs keep high scores in a rounded font; scores of 300,000 random pairs correlate with Spearman 0.93" src="docs/assets/fonts-light.png" width="100%">
+  </picture>
+</p>
+
+| Comparison | Spearman (random pairs) | Pairs ≥ 0.85 in A that stay ≥ 0.80 in B | …and stay in B's top 50 | Top-10 overlap |
+|---|---:|---:|---:|---:|
+| Noto Sans CJK vs jf open 粉圓 (rounded)¹ | 0.93 | 98.0% | 94.2% | 0.34 |
+| Android (Noto + Roboto) vs iOS (PingFang + SF Pro) | 0.93 | 97.7% | 93.0% | 0.38 |
+
+<sub>¹ Over the 8,564 Chinese characters both fonts cover. High-scoring pairs are taken from the top 10 of 4,000 random characters (`python -m glyphsim.compare --sim-a … --sim-b …`).</sub>
+
+Use a **score threshold** rather than a rank cut-off, and take the maximum over platforms if you need to cover both. Differences come from glyph design. Noto draws `刂` in the right half of the box, where it sits inside `到`, so on Android its nearest characters have a vertical stroke on the right (习, 书, 泪); on iOS they are other narrow components (丬, 阝, 卩).
+
+| Table | Latin and digits | Chinese and Bopomofo | Published |
+|---|---|---|---|
+| `android_aosp_zh_tw` | Roboto | Noto Sans CJK TC (SC as fallback) | ✅ in Releases |
+| `ios_zh_tw` | SF Pro (text size) | PingFang TC (SC as fallback) | Build on your Mac, see [why](NOTICE.md#為什麼不提供-ios-表只提供程式) |
+
+Android brands may ship their own fonts; the table uses the AOSP defaults. The comparisons above suggest that look-alikes carry over to other sans-serif designs, while exact ranks do not. PingFang TC lacks 238 of the characters (mostly from 通用规范汉字表), so PingFang SC draws them.
+
+## Data files
+
+Download from [Releases](https://github.com/junwei940302/zh-glyph-similarity/releases):
+
+| File | Size | Contents |
+|---|---:|---|
+| `charset.tsv` | 1 MB | The index: `index`, `char`, `codepoint`, `sets`, `name`. Row *i* is row and column *i* of the matrix. |
+| `matrix_android_aosp_zh_tw_chamfer_st.triu.u8.xz` | 90 MB | Full 16,203 × 16,203 matrix: upper triangle, row-major, uint8 (score × 255), xz-compressed. `GlyphSim.from_files()` or `glyphsim.load.load_matrix()` restores it. |
+| `neighbors_android_aosp_zh_tw_chamfer_st.tsv` | 26 MB | Top 50 neighbours of every character with unrounded scores: `char`, `codepoint`, `rank`, `neighbor`, `neighbor_codepoint`, `score`. |
+| `manifest_android_aosp_zh_tw_chamfer_st.json` | 2 KB | Parameters, fonts, renderer and SHA-256 of each file. |
+
+The matrix stores scores in steps of 1/255; the TSV keeps the unrounded value, so ties in the matrix can order neighbours slightly differently.
+
+## Character set
+
+| Group | Source | Characters |
+|---|---|---:|
+| Bopomofo | U+3105–U+3129 and the five tone marks | 42 |
+| Digits and Latin letters | ASCII 0–9, A–Z, a–z | 62 |
+| Traditional (encoding) | Big5 level 1 + level 2 | 5,401 + 7,652 |
+| Simplified (encoding) | GB2312 level 1 + level 2 | 3,755 + 3,008 |
+| Taiwan standard lists | Ministry of Education common + less-common characters | 4,808 + 6,343 |
+| Mainland standard list | 通用规范汉字表, levels 1–3 | 3,500 + 3,000 + 1,605 |
+
+The union is 16,203 characters. The first 15,537 (Big5 ∪ GB2312) keep the same positions as in the first version; `python -m glyphsim.charset --no-lists` rebuilds that set. Each source adds characters the others lack. GB2312 has the radical components (冂 匚 勹 卩 厶 凵 攵) that the Bopomofo letters ㄇ ㄈ ㄅ ㄗ ㄙ ㄩ ㄆ were derived from, which 通用规范汉字表 omits; level 3 of 通用规范汉字表 adds name and place characters that are mostly missing from GB2312. The `sets` column (`big5_1`, `moe_1`, `tgh_3`, …) lets you slice the matrix to any subset without recomputing.
+
+## Build from source
+
+```bash
+git clone https://github.com/junwei940302/zh-glyph-similarity
+cd zh-glyph-similarity
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[build]"
+
+# any OS; downloads the open fonts
+scripts/run_stack.sh android_aosp_zh_tw
+# macOS only; reads the fonts that ship with macOS
+scripts/run_stack.sh ios_zh_tw
+# writes release/
+python -m glyphsim.export android_aosp_zh_tw_chamfer_st
+# compare two tables
+python -m glyphsim.compare data/topk_android_aosp_zh_tw_chamfer_st.npz data/topk_ios_zh_tw_chamfer_st.npz \
+  --sim-a data/sim_android_aosp_zh_tw_chamfer_st.npy --sim-b data/sim_ios_zh_tw_chamfer_st.npy
+```
+
+On a MacBook Air M2 a table takes about a minute (export about two more) and needs about 2.5 GB of RAM and 300 MB of disk. Outputs go to `data/`; set `OUT=/path` to write elsewhere. `python docs/figures/make_figures.py` rebuilds the figures in this README.
+
+The Android table built on Linux (OpenBLAS) and on macOS (Accelerate) gives identical evaluation scores. A few cells can differ by 1/255 because floating-point sums run in a different order, so the SHA-256 in `manifest_*.json` identifies the released files.
+
+## Limitations
+
+- **Shape only.** Sound-alike swaps (Bopomofo spelling such as `ㄌㄞˋ` for `賴`, homophones) are not covered.
+- **One design per platform.** Brand fonts reorder neighbours; use thresholds, not ranks.
+- **Regular weight, 64 px.** Bold text and very small sizes are not modelled.
+- **Ground truth is limited.** The curated pairs were assembled by the maintainer; a human-rated benchmark is planned.
+- **`pattern()` matches characters only.** Inserted spaces or symbols (`L I N E`) need separate normalisation.
+
+## FAQ
+
+<details>
+<summary><b>Why not just use Unicode's confusables.txt?</b></summary>
+
+It is built for identifiers and domain names. It contains only 15 lines involving Bopomofo, does not link `ㄧ` to `一`, and treats pairs such as 未/末 and 土/士 as the same character, which is too aggressive for running Chinese text. It also gives a yes/no answer, not a score.
+</details>
+
+<details>
+<summary><b>Why is there no iOS table in Releases?</b></summary>
+
+Apple's fonts may only be used on Apple systems and may not be redistributed. The scores are derived from those fonts, so this project ships the code and lets you build the table on your own Mac. Details in <a href="NOTICE.md">NOTICE.md</a>.
+</details>
+
+<details>
+<summary><b>How do I get a smaller table?</b></summary>
+
+Filter <code>charset.tsv</code> by the <code>sets</code> column (for example <code>moe_1</code> and <code>tgh_1</code> for common characters) and take those rows and columns of the matrix. Scores do not depend on which other characters are in the table.
+</details>
+
+## Citation
+
+If you use this table, please cite it. GitHub's **Cite this repository** button reads [`CITATION.cff`](CITATION.cff).
+
+```bibtex
+@misc{huang2026zhglyphsimilarity,
+  author       = {Huang, Jun-Wei},
+  title        = {zh-glyph-similarity: A visual-similarity table for Chinese characters, Bopomofo, digits and Latin letters},
+  year         = {2026},
+  version      = {1.0.0},
+  howpublished = {\url{https://github.com/junwei940302/zh-glyph-similarity}}
+}
+```
+
+## Acknowledgements
+
+- [Noto Sans CJK](https://github.com/notofonts/noto-cjk) and [Roboto](https://github.com/google/fonts/tree/main/ofl/roboto) (SIL OFL), [jf open 粉圓](https://github.com/justfont/open-huninn-font) (SIL OFL).
+- [Unicode UTS #39](https://www.unicode.org/reports/tr39/) confusables and [pycorrector](https://github.com/shibing624/pycorrector) for ground truth.
+- [ButTaiwan/cjktables](https://github.com/ButTaiwan/cjktables) for machine-readable standard character lists.
+- Built for SpamGuard, a research project on detecting scam text messages in Taiwan.
+
+## License
+
+Code: [MIT](LICENSE). Data (character index, tables, curated pairs, evaluation results): [CC BY 4.0](LICENSE-DATA). Third-party data and fonts: [NOTICE.md](NOTICE.md).

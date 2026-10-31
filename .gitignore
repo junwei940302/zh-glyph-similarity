@@ -10,3 +10,6 @@ data/*ios*
 release/
 experiments/v1_archive/*.tsv
 .DS_Store
+build/
+dist/
+*.egg-info/
