@@ -1,0 +1,75 @@
+{
+  "android_aosp_zh_tw": {
+    "description": "AOSP default for a zh-TW device: Roboto for Latin and digits, Noto Sans CJK TC for Han and Bopomofo, Noto Sans CJK SC as fallback. Pixel and most near-stock ROMs ship this pair; brand ROMs (Samsung, Xiaomi, OPPO, vivo) may replace it.",
+    "baseline_font": 1,
+    "fonts": [
+      {
+        "label": "Roboto Regular",
+        "path": "vendor/fonts/Roboto[wdth,wght].ttf",
+        "variation_axes": [
+          400,
+          100
+        ]
+      },
+      {
+        "label": "Noto Sans CJK TC Regular",
+        "path": "vendor/fonts/NotoSansCJK-Regular.ttc",
+        "index": 3
+      },
+      {
+        "label": "Noto Sans CJK SC Regular",
+        "path": "vendor/fonts/NotoSansCJK-Regular.ttc",
+        "index": 2
+      }
+    ]
+  },
+  "ios_zh_tw": {
+    "description": "iOS/macOS for a zh-TW device: SF Pro for Latin and digits, PingFang TC for Han and Bopomofo, PingFang SC as fallback. Apple fonts may not be copied or redistributed: run this stack only on a Mac, with the fonts that ship with macOS. Paths and face indexes are filled in by scripts/find_apple_fonts.py.",
+    "baseline_font": 1,
+    "fonts": [
+      {
+        "label": "SF Pro Regular",
+        "path": "/System/Library/Fonts/SFNS.ttf",
+        "variation_name": "Regular"
+      },
+      {
+        "label": "PingFang TC Regular",
+        "path": "PINGFANG_TTC",
+        "index": -1
+      },
+      {
+        "label": "PingFang SC Regular",
+        "path": "PINGFANG_TTC",
+        "index": -1
+      }
+    ]
+  },
+  "sensitivity_jf_openhuninn": {
+    "description": "Font-sensitivity check only (not a phone default): Roboto for Latin and digits, jf open 粉圓 2.1 (SIL OFL 1.1, rounded design) for Han and Bopomofo, Noto Sans CJK TC/SC for glyphs it lacks.",
+    "baseline_font": 1,
+    "fonts": [
+      {
+        "label": "Roboto Regular",
+        "path": "vendor/fonts/Roboto[wdth,wght].ttf",
+        "variation_axes": [
+          400,
+          100
+        ]
+      },
+      {
+        "label": "jf open 粉圓 2.1",
+        "path": "vendor/fonts/jf-openhuninn-2.1.ttf"
+      },
+      {
+        "label": "Noto Sans CJK TC Regular",
+        "path": "vendor/fonts/NotoSansCJK-Regular.ttc",
+        "index": 3
+      },
+      {
+        "label": "Noto Sans CJK SC Regular",
+        "path": "vendor/fonts/NotoSansCJK-Regular.ttc",
+        "index": 2
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+Similarity tables and character index of zh-glyph-similarity
+Copyright (c) 2026 黃峻偉 (Jun-Wei Huang)
+
+Licensed under the Creative Commons Attribution 4.0 International License
+(CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+Full legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+This covers:
+  - data/charset.tsv
+  - neighbors_*.tsv, matrix_*.triu.u8.xz and manifest_*.json published as release assets
+  - groundtruth/curated_pairs.tsv
+  - data/eval_*.json and experiments/results/*.json
+
+You may share and adapt this data for any purpose, including commercially, as long as
+you give appropriate credit, provide a link to the licence, and indicate if changes
+were made. Suggested credit:
+
+  黃峻偉, zh-glyph-similarity: glyph similarity table for Traditional Chinese,
+  Simplified Chinese, Bopomofo, digits and Latin letters, 2026.
+
+Not covered by this licence (see NOTICE.md):
+  - vendor/groundtruth/unicode_confusables_v18.txt (Unicode License v3)
+  - vendor/groundtruth/pycorrector_same_stroke.txt (Apache License 2.0)
+  - any table computed with Apple fonts; this project does not distribute such tables

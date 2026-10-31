@@ -1,0 +1,53 @@
+{
+  "name": "android_aosp_zh_tw_chamfer_t3",
+  "n_chars": 15537,
+  "score": "similarity in [0,1]; matrix stores round(score*255) as uint8",
+  "params": {
+    "metric": "chamfer",
+    "sigma": 1.5,
+    "tau": 3.0,
+    "k": 50,
+    "render_meta": {
+      "stack": {
+        "description": "AOSP default for a zh-TW device: Roboto for Latin and digits, Noto Sans CJK TC for Han and Bopomofo, Noto Sans CJK SC as fallback. Pixel and most near-stock ROMs ship this pair; brand ROMs (Samsung, Xiaomi, OPPO, vivo) may replace it.",
+        "baseline_font": 1,
+        "fonts": [
+          {
+            "label": "Roboto Regular",
+            "path": "vendor/fonts/Roboto[wdth,wght].ttf",
+            "variation_axes": [
+              400,
+              100
+            ]
+          },
+          {
+            "label": "Noto Sans CJK TC Regular",
+            "path": "vendor/fonts/NotoSansCJK-Regular.ttc",
+            "index": 3
+          },
+          {
+            "label": "Noto Sans CJK SC Regular",
+            "path": "vendor/fonts/NotoSansCJK-Regular.ttc",
+            "index": 2
+          }
+        ]
+      },
+      "canvas": 64,
+      "font_size": 56,
+      "baseline_y": 53.28,
+      "ascent_ratio": 0.88,
+      "renderer": "Pillow 12.3.0 / FreeType, grayscale anti-aliased",
+      "stack_name": "android_aosp_zh_tw"
+    }
+  },
+  "files": {
+    "neighbors_android_aosp_zh_tw_chamfer_t3.tsv": {
+      "bytes": 24708939,
+      "sha256": "2824d4129999addcd3c800bdd6cd5045779f54c1cca8fed0a475e71eb61af916"
+    },
+    "matrix_android_aosp_zh_tw_chamfer_t3.triu.u8.xz": {
+      "bytes": 82958872,
+      "sha256": "bb5cf0e80fb22873ee78d60b4133e1dde60bc574478860718110047b17c87df4"
+    }
+  }
+}

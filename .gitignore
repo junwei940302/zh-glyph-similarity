@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+vendor/fonts/
+vendor/charlists/
+stacks.local.json
+data/render_*.npz
+data/sim_*.npy
+data/topk_*.npz
+data/*ios*
+release/
+experiments/v1_archive/*.tsv
+.DS_Store
