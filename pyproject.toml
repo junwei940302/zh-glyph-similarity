@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "zh-glyph-similarity"
 version = "1.0.0"
-description = "Visual similarity table for 16,203 Traditional/Simplified Chinese characters, Bopomofo, digits and Latin letters, rendered with real phone fonts."
+description = "Chinese homoglyph table: visual similarity for 16,203 Traditional/Simplified Chinese characters, Bopomofo, digits and Latin letters, rendered with real phone fonts."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 license-files = ["LICENSE", "LICENSE-DATA"]
 authors = [{ name = "Jun-Wei Huang (黃峻偉)" }]
-keywords = ["chinese", "homoglyph", "confusables", "bopomofo", "zhuyin", "glyph-similarity", "spam-detection", "smishing"]
+keywords = ["chinese", "hanzi", "homoglyph", "confusables", "character-similarity", "bopomofo", "zhuyin", "glyph-similarity", "spam-detection", "smishing", "形近字"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Natural Language :: Chinese (Traditional)",

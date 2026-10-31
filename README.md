@@ -5,9 +5,10 @@
 <h1 align="center">zh-glyph-similarity</h1>
 
 <p align="center">
-  <b>Which characters look alike on a phone?</b><br>
-  A visual-similarity table for 16,203 Traditional and Simplified Chinese characters, Bopomofo, digits and Latin letters.<br>
-  Every pair is scored with one formula, on glyphs rendered with real phone fonts.
+  <b>Chinese homoglyph table: which characters look alike on a phone?</b><br>
+  Visual similarity for every pair of 16,203 Traditional and Simplified Chinese characters, Bopomofo (Zhuyin), digits and Latin letters,
+  scored with one formula on glyphs rendered with real phone fonts.<br>
+  <sub>形近字・形似字相似度總表｜繁體中文・簡體中文・注音符號・數字・英文字母</sub>
 </p>
 
 <p align="center">
@@ -39,7 +40,7 @@
   </picture>
 </p>
 
-Scam messages dodge keyword filters by swapping characters that look the same: `L1NE` for `LINE`, Bopomofo `ㄚ` for `丫`, a rare `頛` for `賴`. This project measures how alike any two of 16,203 characters look when a phone draws them, so filters, normalisers and test sets can account for those swaps.
+Scam messages dodge keyword filters by swapping in homoglyphs, characters that look the same: `L1NE` for `LINE`, Bopomofo `ㄚ` for `丫`, a rare `頛` for `賴`. This project measures how alike any two of 16,203 characters look when a phone draws them, so filters, normalisers and test sets can account for those swaps.
 
 ## Highlights
 
