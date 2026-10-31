@@ -292,7 +292,8 @@ If you use this table, please cite it. GitHub's **Cite this repository** button 
 - [Noto Sans CJK](https://github.com/notofonts/noto-cjk) and [Roboto](https://github.com/google/fonts/tree/main/ofl/roboto) (SIL OFL), [jf open 粉圓](https://github.com/justfont/open-huninn-font) (SIL OFL).
 - [Unicode UTS #39](https://www.unicode.org/reports/tr39/) confusables and [pycorrector](https://github.com/shibing624/pycorrector) for ground truth.
 - [ButTaiwan/cjktables](https://github.com/ButTaiwan/cjktables) for machine-readable standard character lists.
-- Built for SpamGuard, a research project on detecting scam text messages in Taiwan.
+- Built for SpamGuard（A Hybrid Framework Integrating Semantic Features for Scam SMS Detection）, a research project on detecting scam text messages in Taiwan.
+- Claude Code :)
 
 ## License
 
