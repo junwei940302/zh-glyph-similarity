@@ -292,7 +292,8 @@ Apple 字型只能在 Apple 系統上使用，不得再散布。iOS 表的分數
 - [Noto Sans CJK](https://github.com/notofonts/noto-cjk)、[Roboto](https://github.com/google/fonts/tree/main/ofl/roboto)、[jf open 粉圓](https://github.com/justfont/open-huninn-font)（皆為 SIL OFL）。
 - 驗證資料來自 [Unicode UTS #39](https://www.unicode.org/reports/tr39/) confusables 與 [pycorrector](https://github.com/shibing624/pycorrector)。
 - 標準字表的機器可讀版本來自 [ButTaiwan/cjktables](https://github.com/ButTaiwan/cjktables)。
-- 本專案為 SpamGuard（臺灣詐騙簡訊偵測研究）的一部分。
+- 本專案為 SpamGuard（融合語意特徵之混合模型於詐騙簡訊偵測研究）的一部分。
+- Claude Code :)
 
 ## 授權
 
