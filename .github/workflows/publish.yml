@@ -1,1 +1,33 @@
-bmFtZTogUHVibGlzaCB0byBQeVBJCgpvbjoKICByZWxlYXNlOgogICAgdHlwZXM6IFtwdWJsaXNoZWRdCgpwZXJtaXNzaW9uczoKICBjb250ZW50czogcmVhZAogIGlkLXRva2VuOiB3cml0ZQoKam9iczoKICBwdWJsaXNoOgogICAgbmFtZTogQnVpbGQgYW5kIHB1Ymxpc2ggcGFja2FnZQogICAgcnVucy1vbjogdWJ1bnR1LWxhdGVzdAogICAgZW52aXJvbm1lbnQ6CiAgICAgIG5hbWU6IHB5cGkKICAgICAgdXJsOiBodHRwczovL3B5cGkub3JnL3AvemgtZ2x5cGgtc2ltaWxhcml0eQogICAgc3RlcHM6CiAgICAgIC0gbmFtZTogQ2hlY2sgb3V0IHJlcG9zaXRvcnkKICAgICAgICB1c2VzOiBhY3Rpb25zL2NoZWNrb3V0QHY0CgogICAgICAtIG5hbWU6IFNldCB1cCBQeXRob24KICAgICAgICB1c2VzOiBhY3Rpb25zL3NldHVwLXB5dGhvbkB2NQogICAgICAgIHdpdGg6CiAgICAgICAgICBweXRob24tdmVyc2lvbjogJzMueCcKCiAgICAgIC0gbmFtZTogQnVpbGQgcGFja2FnZQogICAgICAgIHJ1bjogfAogICAgICAgICAgcHl0aG9uIC1tIHBpcCBpbnN0YWxsIC0tdXBncmFkZSBidWlsZAogICAgICAgICAgcHl0aG9uIC1tIGJ1aWxkCgogICAgICAtIG5hbWU6IFB1Ymxpc2ggcGFja2FnZSB0byBQeVBJCiAgICAgICAgdXNlczogcHlwYS9naC1hY3Rpb24tcHlwaS1wdWJsaXNoQHJlbGVhc2UvdjE=
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Build and publish package
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/zh-glyph-similarity
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Build package
+        run: |
+          python -m pip install --upgrade build
+          python -m build
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
